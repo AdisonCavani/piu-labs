@@ -17,3 +17,9 @@ a {
 a:hover {
   text-decoration: underline; /* podkreślenie przy najechaniu */
 }
+
+.back-button {
+  position: absolute;
+  top: 24px;
+  left: 24px
+}
