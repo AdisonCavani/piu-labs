@@ -1,0 +1,182 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 1rem;
+}
+
+.theme-picker {
+  border: 2px solid #e09b5f;
+  border-radius: 8px;
+  background-color: #f4f6dc;
+}
+
+.theme-picker legend {
+  font-weight: 600;
+}
+
+.container {
+  margin: 22px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 44px;
+  border: 2px solid #e09b5f;
+  border-radius: 8px;
+  background-color: #f4f6dc;
+  padding: 22px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item {
+  max-width: 31%;
+  display: flex;
+  justify-content: center;
+  place-items: center;
+  flex-direction: column;
+  border-radius: 8px;
+  color: white;
+  min-height: 64px;
+  flex: 1 1 30%;
+}
+
+.item:nth-child(4) {
+  margin-right: auto;
+}
+
+.item:nth-child(5) {
+  margin-left: auto;
+}
+
+header:has(input[value="blue"]:checked) + .container {
+  .item {
+    background-color: #0402fc;
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+
+    .item {
+      max-width: 60% !important;
+      width: 100%;
+      margin: 0 !important;
+    }
+  }
+}
+
+header:has(input[value="red"]:checked) + .container {
+  flex-wrap: unset;
+  gap: 12px;
+
+  .item {
+    background-color: #fc0204;
+  }
+
+  .item:nth-child(1)::after {
+    content: "(Jestem większy i na środku)";
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+
+  .item:nth-child(1) {
+    order: 3;
+    min-width: 30%;
+    font-weight: bold;
+  }
+
+  .item:nth-child(2) {
+    order: 1;
+  }
+
+  .item:nth-child(3) {
+    order: 2;
+  }
+
+  .item:nth-child(4) {
+    order: 4;
+  }
+
+  .item:nth-child(5) {
+    order: 5;
+  }
+
+  @media (max-width: 1024px) {
+    flex-wrap: wrap;
+
+    .item:nth-child(1) {
+      order: 3;
+      min-width: 100%;
+    }
+
+    .item {
+      min-width: 45%;
+    }
+  }
+}
+
+header:has(input[value="green"]:checked) + .container {
+  flex-wrap: unset;
+  gap: 12px;
+
+  .item {
+    background-color: #048204;
+  }
+
+  .item:nth-child(1) {
+    min-width: 30%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .item:nth-child(2) {
+    max-width: 25%;
+  }
+
+  .item:nth-child(3) {
+    max-width: 20%;
+  }
+
+  .item:nth-child(4) {
+    max-width: 13%;
+  }
+
+  .item:nth-child(5) {
+    max-width: 7%;
+  }
+
+  .item:nth-child(1)::before,
+  .item:nth-child(1)::after {
+    content: "😀";
+    display: "inline-block";
+    transform: scale(2);
+    margin: 0 22px;
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column-reverse;
+    align-items: end;
+
+    .item {
+      margin: 0;
+    }
+
+    .item:nth-child(1) {
+      min-width: 80%;
+    }
+
+    .item:nth-child(2) {
+      min-width: 65%;
+    }
+
+    .item:nth-child(3) {
+      min-width: 52%;
+    }
+
+    .item:nth-child(4) {
+      min-width: 40%;
+    }
+
+    .item:nth-child(5) {
+      min-width: 25%;
+    }
+  }
+}
