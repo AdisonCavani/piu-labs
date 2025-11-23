@@ -17,3 +17,21 @@ a {
 a:hover {
   text-decoration: underline; /* podkreślenie przy najechaniu */
 }
+
+nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  margin-top: 48px;
+}
+
+nav a {
+  display: grid;
+  place-items: center;
+  width: 220px;
+  height: 64px;
+  background-color: azure;
+  border-radius: 12px;
+  border: 1px solid rgb(216, 216, 216);
+}
