@@ -4,9 +4,73 @@
     <meta charset="UTF-8" />
     <title>Lab 3</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/polo.css" />
   </head>
   <body>
-    <h1>Lab 3</h1>
-    <a href="..">Powrót</a>
+    <main>
+      <div class="img-wrapper">
+        <img
+          src="./img/polo_b.png"
+          alt="Koszulka polo niebieska"
+          class="img-blue"
+        />
+        <img
+          src="./img/polo_r.png"
+          alt="Koszulka polo czerwona"
+          class="img-red"
+        />
+        <img
+          src="./img/polo_g.png"
+          alt="Koszulka polo zielona"
+          class="img-green"
+        />
+        <img
+          src="./img/polo_y.png"
+          alt="Koszulka polo żółta"
+          class="img-yellow"
+        />
+      </div>
+      <div class="content">
+        <div class="title">
+          <h1>Koszulka Polo</h1>
+          <div>Promocja!</div>
+        </div>
+
+        <p class="description">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+          officiis cum nihil? Voluptatum incidunt veritatis.
+        </p>
+
+        <div class="color-picker">
+          <h2>Kolor</h2>
+          <input type="radio" name="color" value="blue" checked />
+          <input type="radio" name="color" value="red" />
+          <input type="radio" name="color" value="green" />
+          <input type="radio" name="color" value="yellow" />
+        </div>
+
+        <div class="size-picker">
+          <h2>Rozmiar</h2>
+
+          <div>
+            <input type="radio" name="size" id="size-s" value="s" />
+            <label for="size-s">S</label>
+
+            <input type="radio" name="size" id="size-m" value="m" checked />
+            <label for="size-m">M</label>
+
+            <input type="radio" name="size" id="size-l" value="l" />
+            <label for="size-l">L</label>
+
+            <input type="radio" name="size" id="size-xl" value="xl" />
+            <label for="size-xl">XL</label>
+          </div>
+        </div>
+
+        <h2 class="price">59,99 zł</h2>
+
+        <button>🛒 Do koszyka</button>
+      </div>
+    </main>
   </body>
 </html>
