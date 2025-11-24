@@ -1,0 +1,40 @@
+/* Minimalny reset  */
+html {
+  font-size: 16px; /* bazowy rozmiar czcionki */
+  font-family: system-ui, sans-serif; /* font systemowy */
+  line-height: 1.5; /* lepsza czytelność */
+}
+body {
+  margin: 1rem;
+  padding: 0;
+}
+
+main {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 64px 12px;
+  justify-items: center;
+  margin: 64px 0;
+}
+
+@media (max-width: 1200px) {
+  main {
+    grid-template-columns: none;
+  }
+}
+
+figure:hover {
+  box-shadow: 0px 0px 37px 0px rgba(150, 150, 150, 1);
+}
+
+img {
+  width: 100%;
+}
+
+figcaption {
+  border: 1px solid gray;
+  border-top: none;
+  padding: 6px;
+  margin-top: -6px;
+  font-weight: 500;
+}
