@@ -4,9 +4,53 @@
     <meta charset="UTF-8" />
     <title>Lab 4</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/kanban.css" />
   </head>
   <body>
-    <h1>Lab 4</h1>
+    <h1>Tablica Kanban</h1>
     <a href="..">Powrót</a>
+
+    <main>
+      <div class="column">
+        <h3>Do zrobienia</h3>
+
+        <div class="action-column">
+          <button id="sort-todo" class="sort-btn">Sortuj ↕️</button>
+          <button id="col-todo" class="col-btn">Zmień kolor 🎨</button>
+        </div>
+
+        <div id="todo" class="tasks"></div>
+
+        <button id="add-todo" class="add-btn">Dodaj zadanie +</button>
+      </div>
+
+      <div class="column">
+        <h3>W trakcie</h3>
+
+        <div class="action-column">
+          <button id="sort-inProgress" class="sort-btn">Sortuj ↕️</button>
+          <button id="col-inProgress" class="col-btn">Zmień kolor 🎨</button>
+        </div>
+
+        <div id="inProgress" class="tasks"></div>
+
+        <button id="add-inProgress" class="add-btn">Dodaj zadanie +</button>
+      </div>
+
+      <div class="column">
+        <h3>Zakończone</h3>
+
+        <div class="action-column">
+          <button id="sort-done" class="sort-btn" onclick="">Sortuj ↕️</button>
+          <button id="col-done" class="col-btn">Zmień kolor 🎨</button>
+        </div>
+
+        <div id="done" class="tasks"></div>
+
+        <button id="add-done" class="add-btn">Dodaj zadanie +</button>
+      </div>
+    </main>
   </body>
+
+  <script src="./script.js"></script>
 </html>
