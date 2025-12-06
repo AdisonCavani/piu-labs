@@ -17,3 +17,38 @@ a {
 a:hover {
   text-decoration: underline; /* podkreślenie przy najechaniu */
 }
+
+.action-buttons {
+  display: flex;
+  gap: 22px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid gray;
+}
+
+button {
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid lightgray;
+  cursor: pointer;
+  padding: 12px 24px;
+}
+
+#loader {
+  display: none;
+  font-weight: bold;
+}
+
+#error {
+  color: red;
+  font-weight: bold;
+}
+
+#list {
+  border-radius: 6px;
+}
+
+.item {
+  padding: 6px 0;
+  border-bottom: 1px solid #ddd;
+}

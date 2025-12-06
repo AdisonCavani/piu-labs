@@ -4,8 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <div class="action-buttons">
+      <button id="load-button">Pobierz dane</button>
+      <button id="error-button">Wywołaj błąd</button>
+      <button id="reset-button">Reset</button>
+    </div>
+
+    <div id="loader">🔄 Ładowanie...</div>
+    <div id="error"></div>
+    <div id="list"></div>
+
     <script type="module" src="./js/app.js"></script>
   </body>
 </html>
