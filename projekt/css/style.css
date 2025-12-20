@@ -1,0 +1,30 @@
+/* Minimalny reset  */
+* {
+  box-sizing: border-box;
+  color: #292a2e;
+  font-family: "Atlassian Sans", system-ui, sans-serif;
+}
+
+html {
+  font-size: 14px; /* bazowy rozmiar czcionki */
+  line-height: 1.5; /* lepsza czytelność */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: #0066cc; /* niebieski kolor linków */
+  text-decoration: none; /* bez podkreślenia */
+  font-size: 1.4rem;
+}
+a:hover {
+  text-decoration: underline; /* podkreślenie przy najechaniu */
+}
+
+@font-face {
+  font-family: "Atlassian Sans";
+  src: url("./AtlassianSans.v3.ttf") format("truetype");
+}

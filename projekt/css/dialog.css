@@ -1,0 +1,78 @@
+dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  margin: 0;
+  padding: 24px;
+
+  border: none;
+  border-radius: 8px;
+
+  width: 360px;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.dialog-buttons button {
+  width: 100%;
+  height: 40px;
+  margin-top: 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dialog-buttons button[type="submit"] {
+  background-color: rgb(0, 119, 255);
+  color: white;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.form-item label {
+  cursor: pointer;
+}
+
+.form-item input,
+select {
+  height: 34px;
+  padding: 6px 14px;
+
+  outline: none;
+  border: 1px solid lightgray;
+  border-radius: 6px;
+
+  transition: border-color 0.1s ease-out;
+}
+
+.form-item input:focus {
+  border-color: gray;
+  border-width: 2px;
+}
+
+.form-item select {
+  cursor: pointer;
+}

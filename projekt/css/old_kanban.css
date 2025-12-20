@@ -1,0 +1,107 @@
+main {
+    display: flex;
+    flex-direction: row;
+    gap: 64px;
+    justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  main {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .column {
+    max-width: 70% !important;
+    width: 100% !important;
+  }
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    padding: 16px 24px;
+    border-radius: 8px;
+    width: 33%;
+    max-width: 350px;
+    box-shadow: 0px 0px 20px 0px rgba(196, 196, 196, 1);
+}
+
+.action-column {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid lightgray;
+}
+
+.sort-btn, .col-btn {
+    width: 100%;
+    height: 36px;
+    cursor: pointer;
+}
+
+.add-btn {
+    margin-top: auto;
+    width: 100%;
+    height: 48px;
+    cursor: pointer;
+}
+
+.tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 0;
+    margin-bottom: 16px;
+}
+
+.task {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: 6px;
+    gap: 18px;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.remove-btn {
+    border: none;
+    background-color: transparent;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.task-actions {
+    display: flex;
+}
+
+.left-btn {
+    margin-right: auto;
+}
+
+.right-btn {
+    margin-left: auto;
+}
+
+.color-btn, .left-btn, .right-btn {
+    border: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-out;
+}
+
+.color-btn:hover, .left-btn:hover, .right-btn:hover {
+    background-color: lightgray;
+}
