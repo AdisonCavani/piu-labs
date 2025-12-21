@@ -39,3 +39,16 @@
   display: flex;
   gap: 4px;
 }
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.task-remove-btn {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  font-weight: 600;
+}

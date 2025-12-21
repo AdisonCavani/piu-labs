@@ -81,6 +81,14 @@ export function initialize() {
 
       if (boardEl) boardEl.appendChild(taskEl);
     });
+
+    const renderedTasks = document.querySelectorAll('[data-role="task"]');
+
+    renderedTasks.forEach((renderedTask) => {
+      const taskId = renderedTask.dataset.taskId;
+
+      if (!tasks.some((task) => task.id == taskId)) renderedTask.remove();
+    });
   });
 }
 
@@ -140,11 +148,25 @@ const createTaskEl = ({ id, tag, name, priorityId }) => {
 
   const task = document.createElement("div");
   task.dataset.taskId = id;
+  task.dataset.role = "task";
   task.classList.add("task");
+
+  const taskHeader = document.createElement("div");
+  taskHeader.classList.add("task-header");
 
   const taskName = document.createElement("span");
   taskName.classList.add("task-name");
   taskName.textContent = name;
+
+  const removeBtn = document.createElement("button");
+  removeBtn.classList.add("task-remove-btn");
+  removeBtn.textContent = "x";
+  removeBtn.addEventListener("click", () => {
+    store.removeTask(id);
+  });
+
+  taskHeader.appendChild(taskName);
+  taskHeader.appendChild(removeBtn);
 
   const taskContent = document.createElement("div");
   taskContent.classList.add("task-content");
@@ -176,7 +198,7 @@ const createTaskEl = ({ id, tag, name, priorityId }) => {
   taskContent.appendChild(taskDetails);
 
   // składamy cały task
-  task.appendChild(taskName);
+  task.appendChild(taskHeader);
   task.appendChild(taskContent);
 
   return task;

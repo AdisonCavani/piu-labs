@@ -51,7 +51,8 @@ class Store {
 
   addTask(name, priorityId) {
     this.#state.tasks.push({
-      id: Date.now(),
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
 
       boardId: 1,
       priorityId: priorityId,
