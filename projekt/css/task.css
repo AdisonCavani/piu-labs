@@ -52,3 +52,15 @@
   border: none;
   font-weight: 600;
 }
+
+.task.dragging {
+    opacity: 0.5;
+}
+
+.drop-indicator {
+    height: 1px;
+    background-color: #292a2e;
+    margin: 8px 0;
+    border-radius: 4px;
+    pointer-events: none;
+}

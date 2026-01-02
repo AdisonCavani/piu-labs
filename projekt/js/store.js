@@ -71,6 +71,25 @@ class Store {
     this.#saveAndNotify("tasks");
   }
 
+  updateBoardTasks(boardId, orderedTaskIds) {
+    const otherTasks = this.#state.tasks.filter(
+      (task) => !orderedTaskIds.includes(String(task.id))
+    );
+
+    const updatedTasks = orderedTaskIds
+      .map((id) => {
+        const task = this.#state.tasks.find((t) => t.id == id);
+        if (task) {
+          task.boardId = Number(boardId);
+          return task;
+        }
+      })
+      .filter((task) => task !== undefined);
+
+    this.#state.tasks = [...otherTasks, ...updatedTasks];
+    this.#saveAndNotify("tasks");
+  }
+
   // --- Subskrypcje ---
   subscribe(prop, callback) {
     if (!this.#subscribers.has(prop)) {

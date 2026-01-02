@@ -1,5 +1,8 @@
 import { store } from "./store.js";
 
+const indicator = document.createElement("div");
+indicator.classList.add("drop-indicator");
+
 export function initialize() {
   const loadingEl = document.getElementById("loader");
   const mainLayout = document.querySelector("main");
@@ -114,6 +117,40 @@ const createBoardEl = (id, name, tasksCount) => {
   tasks.dataset.role = "tasks";
   tasks.classList.add("board-tasks");
 
+  tasks.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    tasks.style.backgroundColor = "#e2e4e6";
+
+    const afterElement = getDragAfterElement(tasks, e.clientY);
+
+    if (afterElement == null) {
+      tasks.appendChild(indicator);
+    } else {
+      tasks.insertBefore(indicator, afterElement);
+    }
+  });
+
+  tasks.addEventListener("dragleave", (e) => {
+    if (!tasks.contains(e.relatedTarget)) {
+      tasks.style.backgroundColor = "";
+      indicator.remove();
+    }
+  });
+
+  tasks.addEventListener("drop", (e) => {
+    e.preventDefault();
+    tasks.style.backgroundColor = "";
+
+    const draggable = document.querySelector(".dragging");
+
+    tasks.insertBefore(draggable, indicator);
+    indicator.remove();
+
+    const taskElements = [...tasks.querySelectorAll(".task")];
+    const orderedIds = taskElements.map((el) => el.dataset.taskId);
+    store.updateBoardTasks(id, orderedIds);
+  });
+
   header.appendChild(headerText);
   header.appendChild(headerIcon);
 
@@ -150,6 +187,17 @@ const createTaskEl = ({ id, tag, name, priorityId }) => {
   task.dataset.taskId = id;
   task.dataset.role = "task";
   task.classList.add("task");
+  task.setAttribute("draggable", "true");
+
+  task.addEventListener("dragstart", (e) => {
+    task.classList.add("dragging");
+    e.dataTransfer.setData("text/plain", id);
+    e.dataTransfer.effectAllowed = "move";
+  });
+
+  task.addEventListener("dragend", () => {
+    task.classList.remove("dragging");
+  });
 
   const taskHeader = document.createElement("div");
   taskHeader.classList.add("task-header");
@@ -162,7 +210,9 @@ const createTaskEl = ({ id, tag, name, priorityId }) => {
   removeBtn.classList.add("task-remove-btn");
   removeBtn.textContent = "x";
   removeBtn.addEventListener("click", () => {
-    store.removeTask(id);
+      if (confirm("Czy na pewno chcesz usunąć to zadanie?")) {
+          store.removeTask(id);
+      }
   });
 
   taskHeader.appendChild(taskName);
@@ -234,3 +284,23 @@ const createAvatarEl = () => {
 
   return svg;
 };
+
+function getDragAfterElement(container, y) {
+  const draggableElements = [
+    ...container.querySelectorAll(".task:not(.dragging)"),
+  ];
+
+  return draggableElements.reduce(
+    (closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    },
+    { offset: Number.NEGATIVE_INFINITY }
+  ).element;
+}

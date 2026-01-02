@@ -57,6 +57,8 @@ main {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex-grow: 1;
+  min-height: 100px;
 }
 
 #create-task {
