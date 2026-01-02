@@ -24,6 +24,111 @@ a:hover {
   text-decoration: underline; /* podkreślenie przy najechaniu */
 }
 
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-btn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  user-select: none;
+}
+
+.theme-btn::after {
+  content: "🌙";
+}
+
+body:has(#theme-toggle:checked) .theme-btn::after {
+  content: "☀️";
+}
+
+body:has(#theme-toggle:checked),
+body:has(#theme-toggle:checked) .board-header-icon {
+  background-color: #353536;
+  color: #b0b3b8;
+}
+
+body:has(#theme-toggle:checked) .board {
+  background-color: #262728;
+}
+
+body:has(#theme-toggle:checked) .task,
+body:has(#theme-toggle:checked) input,
+body:has(#theme-toggle:checked) select,
+body:has(#theme-toggle:checked) option,
+body:has(#theme-toggle:checked) #cancel-btn,
+body:has(#theme-toggle:checked) #create-task:hover {
+  background-color: #3a3b3c;
+}
+
+body:has(#theme-toggle:checked) #create-task,
+body:has(#theme-toggle:checked) .task,
+body:has(#theme-toggle:checked) .task-name,
+body:has(#theme-toggle:checked) dialog,
+body:has(#theme-toggle:checked) #cancel-btn {
+  color: #e4e6eb;
+}
+
+body:has(#theme-toggle:checked) .task-details,
+body:has(#theme-toggle:checked) .task-priority,
+body:has(#theme-toggle:checked) .task-tag,
+body:has(#theme-toggle:checked) .task-remove-btn,
+body:has(#theme-toggle:checked) .drop-indicator {
+  color: #b0b3b8;
+}
+
+body:has(#theme-toggle:checked) .drop-indicator {
+  background-color: #b0b3b8;
+}
+
+body:has(#theme-toggle:checked) nav h1,
+body:has(#theme-toggle:checked) input,
+body:has(#theme-toggle:checked) select,
+body:has(#theme-toggle:checked) option {
+  color: #ffffff;
+}
+
+body:has(#theme-toggle:checked) .task {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+body:has(#theme-toggle:checked) .task:hover {
+  background-color: #4e4f50;
+}
+
+body:has(#theme-toggle:checked) .task-assignee {
+  background-color: #ffffff;
+}
+
+body:has(#theme-toggle:checked) dialog {
+  background-color: #242526;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+body:has(#theme-toggle:checked) dialog h2,
+body:has(#theme-toggle:checked) dialog label {
+  color: #ffffff !important;
+}
+
+body:has(#theme-toggle:checked) input,
+body:has(#theme-toggle:checked) select {
+  border: 1px solid #555;
+}
+
+.board-tasks.drag-over {
+  background-color: #e2e4e6;
+  border-radius: 8px;
+}
+
+body:has(#theme-toggle:checked) .board-tasks.drag-over {
+  background-color: #3e4042;
+}
+
 @font-face {
   font-family: "Atlassian Sans";
   src: url("./AtlassianSans.v3.ttf") format("truetype");

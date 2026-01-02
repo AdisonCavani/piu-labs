@@ -93,6 +93,21 @@ export function initialize() {
       if (!tasks.some((task) => task.id == taskId)) renderedTask.remove();
     });
   });
+
+  const themeCheckbox = document.getElementById("theme-toggle");
+  const savedTheme = localStorage.getItem("theme");
+
+  if (savedTheme === "dark") {
+    themeCheckbox.checked = true;
+  }
+
+  themeCheckbox.addEventListener("change", () => {
+    if (themeCheckbox.checked) {
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "light");
+    }
+  });
 }
 
 const createBoardEl = (id, name, tasksCount) => {
@@ -119,7 +134,7 @@ const createBoardEl = (id, name, tasksCount) => {
 
   tasks.addEventListener("dragover", (e) => {
     e.preventDefault();
-    tasks.style.backgroundColor = "#e2e4e6";
+    tasks.classList.add("drag-over");
 
     const afterElement = getDragAfterElement(tasks, e.clientY);
 
@@ -132,17 +147,17 @@ const createBoardEl = (id, name, tasksCount) => {
 
   tasks.addEventListener("dragleave", (e) => {
     if (!tasks.contains(e.relatedTarget)) {
-      tasks.style.backgroundColor = "";
+      tasks.classList.remove("drag-over");
       indicator.remove();
     }
   });
 
   tasks.addEventListener("drop", (e) => {
     e.preventDefault();
-    tasks.style.backgroundColor = "";
+
+    tasks.classList.remove("drag-over");
 
     const draggable = document.querySelector(".dragging");
-
     tasks.insertBefore(draggable, indicator);
     indicator.remove();
 
