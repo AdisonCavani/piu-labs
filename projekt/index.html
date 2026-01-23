@@ -11,31 +11,89 @@
   </head>
   <body>
     <div id="loader"><span></span></div>
-
+    
     <nav>
       <h1>🚣🏼 Jira board</h1>
-      <input type="checkbox" id="theme-toggle" hidden />
-      <label for="theme-toggle" class="theme-btn" title="Zmień motyw"></label>
+      
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="manage-users-btn" class="nav-btn">👥 Zespół</button>
+        
+        <input type="checkbox" id="theme-toggle" hidden />
+        <label for="theme-toggle" class="theme-btn" title="Zmień motyw"></label>
+      </div>
     </nav>
-
+    
     <main></main>
-
-    <dialog>
+    
+    <dialog id="task-dialog">
       <h2>Nowe zadanie</h2>
-
-      <form>
+      
+      <form id="task-form">
         <div class="form-item">
           <label for="name"> Nazwa zadania:</label>
           <input id="name" name="name" type="text" maxlength="80" required />
         </div>
-
+        
+        <div class="form-item">
+          <label for="assignee-select">Przypisz do:</label>
+          <select id="assignee-select" name="assigneeId">
+            <option value="">-- Brak --</option>
+          </select>
+        </div>
+        
         <div class="form-item">
           <label for="priority"> Priorytet:</label>
           <select id="priority-select" name="priorityId" required></select>
         </div>
-
+        
         <div class="dialog-buttons">
           <button id="cancel-btn" type="button">Anuluj</button>
+          <button type="submit">Zapisz</button>
+        </div>
+      </form>
+    </dialog>
+    
+    <dialog id="users-dialog">
+      <h2>Zarządzanie zespołem</h2>
+      
+      <div style="margin-bottom: 24px;">
+        <ul id="users-list" class="users-list">
+        </ul>
+      </div>
+      
+      <form id="user-form">
+        <div class="form-item">
+          <label for="user-name">Imię:</label>
+          <input id="user-name" name="name" type="text" required placeholder="np. Marek" />
+        </div>
+        
+        <div class="form-item">
+          <label for="user-color">Kolor:</label>
+          <input id="user-color" name="color" type="color" value="#3787eb" style="width: 100%; height: 40px; cursor: pointer;" />
+        </div>
+        
+        <div class="dialog-buttons">
+          <button id="close-users-btn" type="button">Zamknij</button>
+          <button type="submit">Dodaj</button>
+        </div>
+      </form>
+    </dialog>
+    
+    <dialog id="edit-assignee-dialog">
+      <h3>Zmień przypisanie</h3>
+      
+      <form id="edit-assignee-form">
+        <input type="hidden" id="edit-task-id" name="taskId" />
+        
+        <div class="form-item">
+          <label for="edit-assignee-select">Wybierz osobę:</label>
+          <select id="edit-assignee-select" name="assigneeId">
+            <option value="">-- Brak --</option>
+          </select>
+        </div>
+        
+        <div class="dialog-buttons">
+          <button id="close-edit-btn" type="button">Anuluj</button>
           <button type="submit">Zapisz</button>
         </div>
       </form>

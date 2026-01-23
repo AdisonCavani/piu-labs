@@ -7,6 +7,7 @@ class Store {
     boards: [],
     priorities: [],
     tasks: [],
+    users: [],
   };
 
   // Map: key = nazwa właściwości, value = Set(callback)
@@ -15,9 +16,10 @@ class Store {
   constructor() {
     const taskIndex = JSON.parse(localStorage.getItem("task-index"));
     const tasks = JSON.parse(localStorage.getItem("tasks"));
+    const users = JSON.parse(localStorage.getItem("users"));
 
     if (tasks) this.#state.tasks = tasks;
-
+    if (users) this.#state.users = users;
     if (taskIndex) this.#state.taskIndex = Number(taskIndex);
   }
 
@@ -37,6 +39,10 @@ class Store {
     return this.#state.tasks;
   }
 
+  get users() {
+    return this.#state.users;
+  }
+
   loadData(boards, priorities) {
     this.#state.loading = false;
     this.#state.boards = boards;
@@ -45,17 +51,42 @@ class Store {
     this.#saveAndNotify("loading");
     this.#saveAndNotify("boards");
     this.#saveAndNotify("priorities");
+    this.#saveAndNotify("users");
 
     this.#saveAndNotify("tasks");
   }
 
-  addTask(name, priorityId) {
+  addUser(name, color) {
+    this.#state.users.push({
+      id: crypto.randomUUID(),
+      name: name,
+      color: color
+    });
+    this.#saveAndNotify("users");
+  }
+
+  removeUser(userId) {
+    this.#state.users = this.#state.users.filter(({ id }) => id !== userId);
+
+    this.#state.tasks = this.#state.tasks.map(task => {
+      if (task.assigneeId === userId) {
+        return { ...task, assigneeId: null };
+      }
+      return task;
+    });
+
+    this.#saveAndNotify("users");
+    this.#saveAndNotify("tasks");
+  }
+
+  addTask(name, priorityId, assigneeId = null) {
     this.#state.tasks.push({
       id: crypto.randomUUID(),
       createdAt: new Date(),
 
       boardId: 1,
       priorityId: priorityId,
+      assigneeId: assigneeId,
 
       tag: `TASK-${this.#state.taskIndex++}`,
       name: name,
@@ -63,6 +94,18 @@ class Store {
 
     this.#saveAndNotify("taskIndex");
     this.#saveAndNotify("tasks");
+  }
+
+  updateTask(taskId, updates) {
+    const taskIndex = this.#state.tasks.findIndex((t) => t.id === taskId);
+
+    if (taskIndex !== -1) {
+      this.#state.tasks[taskIndex] = {
+        ...this.#state.tasks[taskIndex],
+        ...updates
+      };
+      this.#saveAndNotify("tasks");
+    }
   }
 
   removeTask(taskId) {
@@ -112,6 +155,9 @@ class Store {
 
     if (prop === "tasks")
       localStorage.setItem("tasks", JSON.stringify(this.#state.tasks));
+
+    if (prop === "users")
+      localStorage.setItem("users", JSON.stringify(this.#state.users));
 
     const set = this.#subscribers.get(prop);
 

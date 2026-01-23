@@ -7,25 +7,64 @@ export function initialize() {
   const loadingEl = document.getElementById("loader");
   const mainLayout = document.querySelector("main");
 
-  const dialog = document.querySelector("dialog");
+  const taskDialog = document.getElementById("task-dialog");
+  const usersDialog = document.getElementById("users-dialog");
+  const editAssigneeDialog = document.getElementById("edit-assignee-dialog");
 
   const cancelButton = document.getElementById("cancel-btn");
-  const form = document.querySelector("form");
+  const closeUsersBtn = document.getElementById("close-users-btn");
+  const manageUsersBtn = document.getElementById("manage-users-btn");
+  const closeEditBtn = document.getElementById("close-edit-btn");
+
+  const taskForm = document.getElementById("task-form");
+  const userForm = document.getElementById("user-form");
+  const editAssigneeForm = document.getElementById("edit-assignee-form");
 
   cancelButton.addEventListener("click", () => {
-    dialog.close();
+    taskDialog.close();
   });
 
-  form.addEventListener("submit", (e) => {
+  closeUsersBtn.addEventListener("click", () => {
+    usersDialog.close();
+  });
+
+  manageUsersBtn.addEventListener("click", () => {
+    usersDialog.showModal();
+  });
+
+  closeEditBtn.addEventListener("click", () => {
+    editAssigneeDialog.close()
+  });
+
+  taskForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const formData = new FormData(form);
-    const { name, priorityId } = Object.fromEntries(formData.entries());
+    const formData = new FormData(taskForm);
+    const { name, priorityId, assigneeId } = Object.fromEntries(formData.entries());
 
-    store.addTask(String(name), Number(priorityId));
+    store.addTask(String(name), Number(priorityId), assigneeId || null);
 
-    dialog.close();
-    form.reset();
+    taskDialog.close();
+    taskForm.reset();
+  });
+
+  userForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formData = new FormData(userForm);
+    const { name, color } = Object.fromEntries(formData.entries());
+
+    store.addUser(String(name), String(color));
+    userForm.reset();
+  });
+
+  editAssigneeForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formData = new FormData(editAssigneeForm);
+    const { taskId, assigneeId } = Object.fromEntries(formData.entries());
+
+    store.updateTask(taskId, { assigneeId: assigneeId || null });
+
+    editAssigneeDialog.close();
   });
 
   store.subscribe("loading", (loading) => {
@@ -34,6 +73,7 @@ export function initialize() {
   });
 
   store.subscribe("boards", (boards) => {
+    mainLayout.innerHTML = "";
     boards.forEach((board) => {
       const { id, name } = board;
       const tasks = store.tasks.filter((task) => task.boardId === id);
@@ -44,6 +84,7 @@ export function initialize() {
 
   store.subscribe("priorities", (priorities) => {
     const prioritiesSelectEl = document.getElementById("priority-select");
+    prioritiesSelectEl.innerHTML = "";
 
     priorities.forEach((priority) => {
       const option = document.createElement("option");
@@ -52,6 +93,45 @@ export function initialize() {
       option.textContent = `${priority.icon} ${priority.name}`;
 
       prioritiesSelectEl.appendChild(option);
+    });
+  });
+
+  store.subscribe("users", (users) => {
+    const assigneeSelect = document.getElementById("assignee-select");
+    const editAssigneeSelect = document.getElementById("edit-assignee-select");
+
+    const fillSelect = (selectElement) => {
+      selectElement.innerHTML = '<option value="">-- Brak --</option>';
+      users.forEach(user => {
+        const opt = document.createElement("option");
+        opt.value = user.id;
+        opt.textContent = user.name;
+        selectElement.appendChild(opt);
+      });
+    };
+
+    fillSelect(assigneeSelect);
+    fillSelect(editAssigneeSelect);
+
+    const usersList = document.getElementById("users-list");
+    usersList.innerHTML = "";
+
+    users.forEach(user => {
+      const li = document.createElement("li");
+      li.className = "user-item";
+      li.innerHTML = `
+            <div class="user-info">
+                <div class="avatar" style="background-color: ${user.color}">${user.name[0]}</div>
+                <span>${user.name}</span>
+            </div>
+            <button class="delete-user-btn" data-id="${user.id}">🗑️</button>
+        `;
+
+      li.querySelector("button").addEventListener("click", () => {
+        if(confirm("Usunąć?")) store.removeUser(user.id);
+      });
+
+      usersList.appendChild(li);
     });
   });
 
@@ -70,10 +150,9 @@ export function initialize() {
       const taskExists = document.querySelector(`[data-task-id="${task.id}"]`);
 
       if (taskExists) {
-        const boardId = taskExists.parentElement.dataset.boardId;
-
-        if (task.boardId !== boardId) taskExists.remove();
-        else return;
+        const newEl = createTaskEl(task);
+        taskExists.replaceWith(newEl);
+        return;
       }
 
       const boardEl = document.querySelector(
@@ -158,12 +237,13 @@ const createBoardEl = (id, name, tasksCount) => {
     tasks.classList.remove("drag-over");
 
     const draggable = document.querySelector(".dragging");
-    tasks.insertBefore(draggable, indicator);
-    indicator.remove();
-
-    const taskElements = [...tasks.querySelectorAll(".task")];
-    const orderedIds = taskElements.map((el) => el.dataset.taskId);
-    store.updateBoardTasks(id, orderedIds);
+    if (draggable) {
+      tasks.insertBefore(draggable, indicator);
+      indicator.remove();
+      const taskElements = [...tasks.querySelectorAll(".task")];
+      const orderedIds = taskElements.map((el) => el.dataset.taskId);
+      store.updateBoardTasks(id, orderedIds);
+    }
   });
 
   header.appendChild(headerText);
@@ -185,7 +265,7 @@ const createAddButtonEl = () => {
   button.textContent = "+ Utwórz";
 
   button.addEventListener("click", () => {
-    const dialog = document.querySelector("dialog");
+    const dialog = document.getElementById("task-dialog");
 
     if (dialog) dialog.showModal();
   });
@@ -193,10 +273,11 @@ const createAddButtonEl = () => {
   return button;
 };
 
-const createTaskEl = ({ id, tag, name, priorityId }) => {
+const createTaskEl = ({ id, tag, name, priorityId, assigneeId }) => {
   const priority = store.priorities.find(
     (priority) => priority.id === priorityId
   );
+  const assignee = store.users.find(u => u.id === assigneeId);
 
   const task = document.createElement("div");
   task.dataset.taskId = id;
@@ -251,8 +332,27 @@ const createTaskEl = ({ id, tag, name, priorityId }) => {
   const taskAssignee = document.createElement("div");
   taskAssignee.classList.add("task-assignee");
 
-  const avatarIcon = createAvatarEl();
-  taskAssignee.appendChild(avatarIcon);
+  taskAssignee.title = "Kliknij, aby zmienić osobę";
+  taskAssignee.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    const editDialog = document.getElementById("edit-assignee-dialog");
+    const editSelect = document.getElementById("edit-assignee-select");
+    const editTaskIdInput = document.getElementById("edit-task-id");
+
+    editTaskIdInput.value = id;
+    editSelect.value = assigneeId || "";
+
+    editDialog.showModal();
+  });
+
+  if (assignee) {
+    taskAssignee.innerHTML = `<div class="avatar" style="background-color:${assignee.color}">${assignee.name[0]}</div>`;
+    taskAssignee.title = assignee.name;
+    taskAssignee.style.backgroundColor = "transparent";
+  } else {
+    taskAssignee.innerHTML = createUnassignedIcon();
+  }
 
   // składamy task-details
   taskDetails.appendChild(taskPriority);
@@ -269,36 +369,9 @@ const createTaskEl = ({ id, tag, name, priorityId }) => {
   return task;
 };
 
-const createAvatarEl = () => {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
-  svg.setAttribute("fill", "none");
-  svg.setAttribute("viewBox", "-4 -4 24 24");
-  svg.setAttribute("role", "presentation");
-  svg.classList.add(
-    "_1reo15vq",
-    "_18m915vq",
-    "_syaz1r31",
-    "_lcxvglyw",
-    "_s7n4yfq0",
-    "_vc881r31",
-    "_1bsb1ejb",
-    "_4t3i1ejb"
-  );
-
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("fill", "currentcolor");
-  path.setAttribute("fill-rule", "evenodd");
-  path.setAttribute(
-    "d",
-    "M8 1.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4 4a4 4 0 1 1 8 0 4 4 0 0 1-8 0m-2 9a3.75 3.75 0 0 1 3.75-3.75h4.5A3.75 3.75 0 0 1 14 13v2h-1.5v-2a2.25 2.25 0 0 0-2.25-2.25h-4.5A2.25 2.25 0 0 0 3.5 13v2H2z"
-  );
-  path.setAttribute("clip-rule", "evenodd");
-
-  svg.appendChild(path);
-
-  return svg;
-};
+const createUnassignedIcon = () => {
+  return `<svg fill="none" viewBox="-4 -4 24 24" style="width:100%; height:100%; color:#6b6e76"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8 1.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4 4a4 4 0 1 1 8 0 4 4 0 0 1-8 0m-2 9a3.75 3.75 0 0 1 3.75-3.75h4.5A3.75 3.75 0 0 1 14 13v2h-1.5v-2a2.25 2.25 0 0 0-2.25-2.25h-4.5A2.25 2.25 0 0 0 3.5 13v2H2z"></path></svg>`;
+}
 
 function getDragAfterElement(container, y) {
   const draggableElements = [
