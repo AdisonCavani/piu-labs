@@ -11,7 +11,4 @@ const ajax = new Ajax({
 const boards = await ajax.get("/boards");
 const priorities = await ajax.get("/priorities");
 
-// Symulacja ładowania danych
-// await new Promise((r) => setTimeout(r, 2500));
-
 store.loadData(boards, priorities);

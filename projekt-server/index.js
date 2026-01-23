@@ -33,16 +33,18 @@ const boards = [
 
 require("http")
   .createServer((req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    res.setHeader("Content-Type", "application/json");
+    setTimeout(() => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.setHeader("Content-Type", "application/json");
 
-    if (req.url === "/api/priorities")
-      return res.end(JSON.stringify(priorities));
+      if (req.url === "/api/priorities")
+        return res.end(JSON.stringify(priorities));
 
-    if (req.url === "/api/boards") return res.end(JSON.stringify(boards));
+      if (req.url === "/api/boards") return res.end(JSON.stringify(boards));
 
-    res.statusCode = 404;
-    res.end();
+      res.statusCode = 404;
+      res.end();
+    }, 1000);
   })
   .listen(3000);
