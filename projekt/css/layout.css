@@ -184,6 +184,27 @@ body:has(#theme-toggle:checked) .user-item span {
   color: red;
 }
 
+.search-input {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  font-size: 14px;
+  width: 200px;
+  transition: width 0.2s ease-in-out;
+}
+
+.search-input:focus {
+  border-color: #0077ff;
+  width: 240px;
+}
+
+body:has(#theme-toggle:checked) .search-input {
+  background-color: #3a3b3c;
+  border-color: #555;
+  color: white;
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);

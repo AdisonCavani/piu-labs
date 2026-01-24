@@ -79,7 +79,7 @@ class Store {
     this.#saveAndNotify("tasks");
   }
 
-  addTask(name, priorityId, assigneeId = null) {
+  addTask(name, priorityId, assigneeId = null, deadline = null) {
     this.#state.tasks.push({
       id: crypto.randomUUID(),
       createdAt: new Date(),
@@ -87,6 +87,8 @@ class Store {
       boardId: 1,
       priorityId: priorityId,
       assigneeId: assigneeId,
+      deadline: deadline,
+      notified: false,
 
       tag: `TASK-${this.#state.taskIndex++}`,
       name: name,

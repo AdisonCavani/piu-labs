@@ -20,6 +20,14 @@ export function initialize() {
   const userForm = document.getElementById("user-form");
   const editAssigneeForm = document.getElementById("edit-assignee-form");
 
+  const searchInput = document.getElementById("search-input");
+
+  if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+
+  setInterval(() => checkDeadlines(), 10000);
+
   cancelButton.addEventListener("click", () => {
     taskDialog.close();
   });
@@ -40,12 +48,13 @@ export function initialize() {
     e.preventDefault();
 
     const formData = new FormData(taskForm);
-    const { name, priorityId, assigneeId } = Object.fromEntries(formData.entries());
+    const { name, priorityId, assigneeId, deadline } = Object.fromEntries(formData.entries());
 
-    store.addTask(String(name), Number(priorityId), assigneeId || null);
+    store.addTask(String(name), Number(priorityId), assigneeId || null, deadline || null);
 
     taskDialog.close();
     taskForm.reset();
+    resetSelectColor(document.getElementById("assignee-select"));
   });
 
   userForm.addEventListener("submit", (e) => {
@@ -66,6 +75,26 @@ export function initialize() {
 
     editAssigneeDialog.close();
   });
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase();
+      const allTasks = document.querySelectorAll('.task');
+
+      allTasks.forEach(taskEl => {
+        const taskName = taskEl.querySelector('.task-name').textContent.toLowerCase();
+        const taskTag = taskEl.querySelector('.task-tag').textContent.toLowerCase();
+
+        const assigneeTitle = taskEl.querySelector('.task-assignee').title.toLowerCase();
+
+        if (taskName.includes(query) || taskTag.includes(query) || assigneeTitle.includes(query)) {
+          taskEl.style.display = "";
+        } else {
+          taskEl.style.display = "none";
+        }
+      });
+    });
+  }
 
   store.subscribe("loading", (loading) => {
     if (loading) loadingEl.style.display = undefined;
@@ -106,8 +135,22 @@ export function initialize() {
         const opt = document.createElement("option");
         opt.value = user.id;
         opt.textContent = user.name;
+        opt.style.backgroundColor = user.color;
+        opt.style.color = "#fff";
+
         selectElement.appendChild(opt);
       });
+
+      selectElement.onchange = function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.style.backgroundColor) {
+          this.style.backgroundColor = selectedOption.style.backgroundColor;
+          this.style.color = "#fff";
+          this.style.textShadow = "0px 0px 2px #000";
+        } else {
+          resetSelectColor(this);
+        }
+      };
     };
 
     fillSelect(assigneeSelect);
@@ -187,6 +230,36 @@ export function initialize() {
       localStorage.setItem("theme", "light");
     }
   });
+}
+
+function checkDeadlines() {
+  const now = new Date();
+  const tasks = store.tasks;
+
+  tasks.forEach(task => {
+    if (!task.deadline || task.notified || task.boardId === 3) return;
+
+    const deadlineDate = new Date(task.deadline);
+
+    if (now >= deadlineDate) {
+      if (Notification.permission === "granted") {
+        new Notification(`⏰ Zadanie przeterminowane!`, {
+          body: `Zadanie "${task.name}" powinno być już zrobione.`,
+          icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png"
+        });
+      } else {
+        alert(`⏰ Zadanie przeterminowane: ${task.name}`);
+      }
+
+      store.updateTask(task.id, { notified: true });
+    }
+  });
+}
+
+function resetSelectColor(selectElement) {
+  selectElement.style.backgroundColor = "";
+  selectElement.style.color = "";
+  selectElement.style.textShadow = "";
 }
 
 const createBoardEl = (id, name, tasksCount) => {
@@ -273,7 +346,7 @@ const createAddButtonEl = () => {
   return button;
 };
 
-const createTaskEl = ({ id, tag, name, priorityId, assigneeId }) => {
+const createTaskEl = ({ id, tag, name, priorityId, assigneeId, deadline }) => {
   const priority = store.priorities.find(
     (priority) => priority.id === priorityId
   );
@@ -317,9 +390,31 @@ const createTaskEl = ({ id, tag, name, priorityId, assigneeId }) => {
   const taskContent = document.createElement("div");
   taskContent.classList.add("task-content");
 
+  const taskMeta = document.createElement("div");
+  taskMeta.style.display = "flex";
+  taskMeta.style.flexDirection = "column";
+  taskMeta.style.gap = "4px";
+
   const taskTag = document.createElement("span");
   taskTag.classList.add("task-tag");
   taskTag.textContent = `📝 ${tag}`;
+  taskMeta.appendChild(taskTag);
+
+  if (deadline) {
+    const date = new Date(deadline);
+    const isOverdue = new Date() > date;
+
+    const dateEl = document.createElement("div");
+    dateEl.classList.add("task-deadline");
+    if (isOverdue) dateEl.classList.add("overdue");
+
+    // Formatowanie: np. 12 paź, 14:00
+    const formattedDate = date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' }) +
+      ", " + date.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+
+    dateEl.innerHTML = `🕒 ${formattedDate}`;
+    taskMeta.appendChild(dateEl);
+  }
 
   const taskDetails = document.createElement("div");
   taskDetails.classList.add("task-details");
@@ -343,15 +438,17 @@ const createTaskEl = ({ id, tag, name, priorityId, assigneeId }) => {
     editTaskIdInput.value = id;
     editSelect.value = assigneeId || "";
 
+    editSelect.dispatchEvent(new Event('change'));
     editDialog.showModal();
   });
 
   if (assignee) {
     taskAssignee.innerHTML = `<div class="avatar" style="background-color:${assignee.color}">${assignee.name[0]}</div>`;
-    taskAssignee.title = assignee.name;
+    taskAssignee.title = `Przypisany: ${assignee.name}`;
     taskAssignee.style.backgroundColor = "transparent";
   } else {
     taskAssignee.innerHTML = createUnassignedIcon();
+    taskAssignee.title = "Brak przypisania";
   }
 
   // składamy task-details
@@ -359,7 +456,7 @@ const createTaskEl = ({ id, tag, name, priorityId, assigneeId }) => {
   taskDetails.appendChild(taskAssignee);
 
   // składamy task-content
-  taskContent.appendChild(taskTag);
+  taskContent.appendChild(taskMeta);
   taskContent.appendChild(taskDetails);
 
   // składamy cały task

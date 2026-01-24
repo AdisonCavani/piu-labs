@@ -16,6 +16,8 @@
       <h1>🚣🏼 Jira board</h1>
       
       <div style="display: flex; align-items: center; gap: 12px;">
+        <input type="search" id="search-input" placeholder="🔍 Szukaj zadania..." class="search-input" />
+        
         <button id="manage-users-btn" class="nav-btn">👥 Zespół</button>
         
         <input type="checkbox" id="theme-toggle" hidden />
@@ -39,6 +41,11 @@
           <select id="assignee-select" name="assigneeId">
             <option value="">-- Brak --</option>
           </select>
+        </div>
+        
+        <div class="form-item">
+          <label for="deadline">Termin:</label>
+          <input id="deadline" name="deadline" type="datetime-local" />
         </div>
         
         <div class="form-item">
