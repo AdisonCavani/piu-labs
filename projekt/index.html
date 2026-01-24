@@ -16,6 +16,8 @@
       <h1>🚣🏼 Jira board</h1>
       
       <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="stats-btn" class="nav-btn">📊 Statystyki</button>
+        
         <input type="search" id="search-input" placeholder="🔍 Szukaj zadania..." class="search-input" />
         
         <button id="manage-users-btn" class="nav-btn">👥 Zespół</button>
@@ -104,6 +106,20 @@
           <button type="submit">Zapisz</button>
         </div>
       </form>
+    </dialog>
+    
+    <dialog id="stats-dialog">
+      <h2>Statystyki projektu</h2>
+      
+      <div class="stats-container">
+        <canvas id="stats-canvas" width="200" height="200"></canvas>
+        
+        <div id="stats-legend"></div>
+      </div>
+      
+      <div class="dialog-buttons">
+        <button id="close-stats-btn" type="button">Zamknij</button>
+      </div>
     </dialog>
   </body>
 </html>

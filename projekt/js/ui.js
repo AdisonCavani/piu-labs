@@ -10,11 +10,14 @@ export function initialize() {
   const taskDialog = document.getElementById("task-dialog");
   const usersDialog = document.getElementById("users-dialog");
   const editAssigneeDialog = document.getElementById("edit-assignee-dialog");
+  const statsDialog = document.getElementById("stats-dialog");
 
   const cancelButton = document.getElementById("cancel-btn");
   const closeUsersBtn = document.getElementById("close-users-btn");
   const manageUsersBtn = document.getElementById("manage-users-btn");
   const closeEditBtn = document.getElementById("close-edit-btn");
+  const statsBtn = document.getElementById("stats-btn");
+  const closeStatsBtn = document.getElementById("close-stats-btn");
 
   const taskForm = document.getElementById("task-form");
   const userForm = document.getElementById("user-form");
@@ -42,6 +45,15 @@ export function initialize() {
 
   closeEditBtn.addEventListener("click", () => {
     editAssigneeDialog.close()
+  });
+
+  closeStatsBtn.addEventListener("click", () => {
+    statsDialog.close()
+  });
+
+  statsBtn.addEventListener("click", () => {
+    drawChart();
+    statsDialog.showModal();
   });
 
   taskForm.addEventListener("submit", (e) => {
@@ -229,6 +241,70 @@ export function initialize() {
     } else {
       localStorage.setItem("theme", "light");
     }
+  });
+}
+
+function drawChart() {
+  const canvas = document.getElementById("stats-canvas");
+  const legend = document.getElementById("stats-legend");
+
+  if (!canvas || !legend) return;
+
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  const radius = Math.min(width, height) / 2;
+
+  ctx.clearRect(0, 0, width, height);
+  legend.innerHTML = "";
+
+  const tasks = store.tasks;
+  const boards = store.boards;
+  const totalTasks = tasks.length;
+
+  if (totalTasks === 0) {
+    ctx.beginPath();
+    ctx.arc(width / 2, height / 2, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "#e0e0e0";
+    ctx.fill();
+    legend.innerHTML = "<div>Brak zadań do wyświetlenia</div>";
+    return;
+  }
+
+  const boardColors = {
+    1: "#4b7bec",
+    2: "#fed330",
+    3: "#26de81",
+  };
+  const defaultColor = "#a5b1c2";
+
+  let startAngle = 0;
+
+  boards.forEach(board => {
+    const count = tasks.filter(t => t.boardId === board.id).length;
+    if (count === 0) return;
+
+    // obliczanie wycinka koła
+    const sliceAngle = (count / totalTasks) * 2 * Math.PI;
+    const color = boardColors[board.id] || defaultColor;
+
+    // wycinek
+    ctx.beginPath();
+    ctx.moveTo(width / 2, height / 2); // Środek
+    ctx.arc(width / 2, height / 2, radius, startAngle, startAngle + sliceAngle);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // legenda
+    const legendItem = document.createElement("div");
+    legendItem.className = "legend-item";
+    legendItem.innerHTML = `
+            <div class="legend-color" style="background-color: ${color}"></div>
+            <span>${board.name}: <strong>${count}</strong> (${Math.round(count/totalTasks*100)}%)</span>
+        `;
+    legend.appendChild(legendItem);
+
+    startAngle += sliceAngle;
   });
 }
 

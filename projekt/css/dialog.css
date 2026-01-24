@@ -76,3 +76,47 @@ select {
 .form-item select {
   cursor: pointer;
 }
+
+.stats-container {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin: 24px 0;
+}
+
+#stats-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #292a2e;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+body:has(#theme-toggle:checked) .legend-item {
+  color: white;
+}
+
+body:has(#theme-toggle:checked) .legend-item,
+body:has(#theme-toggle:checked) .legend-item span,
+body:has(#theme-toggle:checked) .legend-item strong {
+  color: #e4e6eb !important;
+}
+
+body:has(#theme-toggle:checked) dialog h2,
+body:has(#theme-toggle:checked) dialog h3,
+body:has(#theme-toggle:checked) dialog label {
+  color: #ffffff !important;
+}
